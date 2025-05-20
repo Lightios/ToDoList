@@ -13,8 +13,9 @@ A modern and feature-rich To-Do List application built with **Kotlin** and **Jet
 - **State Management**: Uses Kotlin `StateFlow` for reactive UI updates.
 
 ## Screenshots
-
-![To-Do List](screenshots\tasks_list.png)
+<img src="screenshots/tasks_list.png" alt="To-Do List" width="200"/> <img src="screenshots/adding_task.png" alt="To-Do List" width="200"/>
+<img src="screenshots/task_details.png" alt="To-Do List" width="200"/>
+<img src="screenshots/empty_list.png" alt="To-Do List" width="200"/>
 
 ## Architecture
 
