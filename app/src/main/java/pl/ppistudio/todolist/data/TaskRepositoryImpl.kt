@@ -27,7 +27,6 @@ class TaskRepositoryImpl(
     override suspend fun getTask(id: String): Task? {
         return withContext(Dispatchers.IO) {
             _tasksFlow.value.find { it.id == id }
-//            taskDao.getAll().find { it.id == id }
         }
     }
 
