@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import pl.ppistudio.todolist.ui.list.TaskListScreen
 import pl.ppistudio.todolist.ui.add_edit.AddEditTaskScreen
 import org.koin.androidx.compose.getViewModel
+import org.koin.core.parameter.parametersOf
 import pl.ppistudio.todolist.ui.add_edit.AddEditTaskViewModel
 import pl.ppistudio.todolist.ui.details.TaskDetailsScreen
 import pl.ppistudio.todolist.ui.details.TaskDetailsViewModel
@@ -34,14 +35,16 @@ fun AppNavigation(
 
             TaskListScreen(
                 onTaskClick = { task ->
-//                    navController.navigate(AddEditTaskScreen(taskId = task.id))
                     navController.navigate(TaskDetailsScreen(taskId = task.id))
                 },
                 onTaskCheckedChange = { task, changed ->
-                    viewModel.updateTaskCompletionStatus(task.id, changed)
+                    viewModel.updateTaskCompletionStatus(task, changed)
                 },
                 onTaskDelete = { taskId ->
                     viewModel.deleteTask(taskId)
+                },
+                onTaskAdd = {
+                    navController.navigate(AddEditTaskScreen())
                 },
                 tasks = tasks.value,
                 isLoading = isLoading.value,
@@ -98,45 +101,38 @@ fun AppNavigation(
         composable<TaskDetailsScreen> {
             val viewModel = getViewModel<TaskDetailsViewModel>()
             val taskId = it.arguments?.getString("taskId") ?: ""
+            viewModel.loadTask(taskId)
+
             val task = viewModel.task.collectAsStateWithLifecycle()
             val isLoading = viewModel.isLoading.collectAsStateWithLifecycle().value
 
-            TaskDetailsScreen(
-                taskId = taskId,
-                loadTask = { taskID ->
-                    viewModel.loadTask(taskID)
-                },
-                onGoBack = {
-                    navController.navigate(TaskListScreen) {
-                        popUpTo(TaskListScreen) {
-                            inclusive = true
-                        }
+            val onGoBack = {
+                navController.navigate(TaskListScreen) {
+                    popUpTo(TaskListScreen) {
+                        inclusive = true
                     }
+                }
+            }
+
+            TaskDetailsScreen(
+                onGoBack = onGoBack,
+                onTaskDelete = {
+                    viewModel.deleteTask(taskId)
+                    onGoBack()
+                },
+                onTaskCheckedChange = { changed ->
+                    viewModel.updateTaskCompletionStatus(changed)
                 },
 
                 taskState = task,
-                isLoading = isLoading,
-                onEditTask = {
+                onTaskEdit = {
                     navController.navigate(AddEditTaskScreen(taskId = taskId))
-                }
+                },
 
             )
         }
     }
 }
-
-/*
-
-    setShowDatePicker: (Boolean) -> Unit,
-    setDueDate: (Long?) -> Unit,
-    onGoBack: () -> Unit,
-    setTitle: (String) -> Unit,
-    setDescription: (String) -> Unit,
-    setPriority: (Priority) -> Unit,
-    creteTask: () -> Unit,
-    updateTask: () -> Unit
-
- */
 
 
 @Serializable

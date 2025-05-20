@@ -27,12 +27,10 @@ fun TaskListScreen(
     onTaskClick: (Task) -> Unit,
     onTaskCheckedChange: (Task, Boolean) -> Unit,
     onTaskDelete: (String) -> Unit,
-//    viewModel: TaskListViewModel,
+    onTaskAdd: () -> Unit,
     tasks: List<Task>,
     isLoading: Boolean,
 ) {
-//    val tasks by viewModel.tasks.collectAsStateWithLifecycle()
-//    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -51,7 +49,7 @@ fun TaskListScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { },
+                onClick = onTaskAdd,
 //                onClick = { navController.navigate(AddEditTaskDestination.createRouteWithParam(null)) },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary

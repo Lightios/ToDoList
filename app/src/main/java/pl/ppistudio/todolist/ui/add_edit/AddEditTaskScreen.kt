@@ -66,7 +66,7 @@ fun AddEditTaskScreen(
     updateTask: () -> Unit
 ) {
 
-    val isEditMode = taskId != null && taskId != "new"
+    val isEditMode = taskId != null
 
     LaunchedEffect(taskId) {
         if (isEditMode) {

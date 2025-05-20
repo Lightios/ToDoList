@@ -1,6 +1,7 @@
 package pl.ppistudio.todolist.ui.add_edit
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import pl.ppistudio.todolist.R
 import pl.ppistudio.todolist.domain.Priority
+import pl.ppistudio.todolist.ui.theme.priorityToColor
 
 
 @Composable
@@ -31,36 +33,27 @@ fun PriorityOption(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val (backgroundColor, contentColor, label, painter) = when (priority) {
-        Priority.HIGH -> Quadruple(
-            if (selected) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f),
-            if (selected) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
-            "High",
-            painterResource(id = R.drawable.priority_high),
-        )
 
-        Priority.MEDIUM -> Quadruple(
-            if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-            if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
-            "Medium",
-            painterResource(id = R.drawable.priority_medium),
-        )
-        Priority.LOW -> Quadruple(
-            if (selected) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-            if (selected) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-            "Low",
-            painterResource(id = R.drawable.priority_low),
-        )
+    val label = when (priority) {
+        Priority.HIGH -> "High Priority"
+        Priority.MEDIUM -> "Medium Priority"
+        Priority.LOW -> "Low Priority"
+    }
+    val color = priorityToColor(priority)
+    val painter = when (priority) {
+        Priority.HIGH -> painterResource(id = R.drawable.priority_high)
+        Priority.MEDIUM -> painterResource(id = R.drawable.priority_medium)
+        Priority.LOW -> painterResource(id = R.drawable.priority_low)
     }
 
     Surface(
         onClick = onClick,
-        color = backgroundColor,
+        color = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(8.dp),
         border = if (selected)
-            BorderStroke(2.dp, contentColor)
+            BorderStroke(3.dp, color)
         else
-            null,
+            BorderStroke(1.dp, color.copy(alpha = 0.5f)),
         modifier = modifier
     ) {
         Column(
@@ -68,10 +61,9 @@ fun PriorityOption(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.padding(vertical = 12.dp)
         ) {
-            Icon(
+            Image(
                 painter = painter,
                 contentDescription = null,
-                tint = contentColor,
                 modifier = Modifier.size(24.dp),
             )
 
@@ -80,7 +72,7 @@ fun PriorityOption(
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium,
-                color = contentColor
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }

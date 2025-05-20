@@ -1,7 +1,9 @@
 package pl.ppistudio.todolist.ui.list
 
 import android.icu.text.SimpleDateFormat
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -21,17 +24,22 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pl.ppistudio.todolist.R
 import pl.ppistudio.todolist.domain.Priority
 import pl.ppistudio.todolist.domain.Task
+import pl.ppistudio.todolist.ui.theme.ToDoListTheme
+import pl.ppistudio.todolist.ui.theme.priorityToColor
 import java.util.Date
 import java.util.Locale
 
@@ -43,16 +51,23 @@ fun TaskItem(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val color = priorityToColor(task.priority)
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick)
+            .border(
+                BorderStroke(
+                    width = 0.dp,
+                    color = color
+                ),
+                shape = RoundedCornerShape(8.dp)
+            )
+        ,
         colors = CardDefaults.cardColors(
-            containerColor = when (task.priority) {
-                Priority.HIGH -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f)
-                Priority.MEDIUM -> MaterialTheme.colorScheme.surfaceVariant
-                Priority.LOW -> MaterialTheme.colorScheme.surface
-            }
+            containerColor = MaterialTheme.colorScheme.surface,
+
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -62,6 +77,15 @@ fun TaskItem(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Surface(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .height(40.dp)
+                    .width(8.dp),
+                shape = RoundedCornerShape(4.dp),
+                color = color
+            ) { }
+
             Checkbox(
                 checked = task.isCompleted,
                 onCheckedChange = onCheckedChange,
@@ -114,33 +138,57 @@ fun TaskItem(
                 }
             }
 
-            when (task.priority) {
+            val (source, description) = when (task.priority) {
                 Priority.HIGH -> {
-                    Image(
-                        painter = painterResource(id = R.drawable.priority_high),
-                        contentDescription = "High Priority",
-                        modifier = Modifier.size(40.dp),
-//                        tint = MaterialTheme.colorScheme.error
+                    Pair(
+                        painterResource(id = R.drawable.priority_high),
+                        "High priority"
                     )
                 }
                 Priority.MEDIUM -> {
-                    Image(
-                        painter = painterResource(id = R.drawable.priority_medium),
-                        contentDescription = "Medium Priority",
-                        modifier = Modifier.size(40.dp),
-//                        tint = MaterialTheme.colorScheme.primary
+                    Pair(
+                        painterResource(id = R.drawable.priority_medium),
+                        "Medium priority"
                     )
+
                 }
                 Priority.LOW -> {
-                    Image(
-                        painter = painterResource(id = R.drawable.priority_low),
-                        contentDescription = "Low Priority",
-                        modifier = Modifier.size(40.dp),
-//                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    Pair(
+                        painterResource(id = R.drawable.priority_low),
+                        "Low priority"
                     )
                 }
             }
+
+            Image(
+                painter = source,
+                contentDescription = description,
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .size(40.dp),
+                colorFilter = null
+            )
         }
     }
 }
 
+
+@Preview
+@Composable
+private fun TaskItemPreview() {
+    ToDoListTheme(darkTheme = true) {
+
+        TaskItem(
+            task = Task(
+                id = "1",
+                title = "Task 1",
+                description = "Description 1",
+                isCompleted = true,
+                dueDate = null,
+                priority = Priority.HIGH
+            ),
+            onClick = {},
+            onCheckedChange = {}
+        )
+    }
+}

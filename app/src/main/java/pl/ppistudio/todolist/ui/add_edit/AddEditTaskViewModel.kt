@@ -36,12 +36,13 @@ class AddEditTaskViewModel (
     fun loadTask(id: String) {
         viewModelScope.launch {
             _isLoading.value = true
-            getSampleTasks().find { it.id == id }?.let { task ->
-                taskId = task.id
-                _title.value = task.title
-                _description.value = task.description
-                _priority.value = task.priority
-                _dueDate.value = task.dueDate
+            val task = taskRepository.getTask(id)
+            task?.let {
+                _title.value = it.title
+                _description.value = it.description
+                _priority.value = it.priority
+                _dueDate.value = it.dueDate
+                taskId = it.id
             }
             _isLoading.value = false
         }
@@ -68,48 +69,29 @@ class AddEditTaskViewModel (
     }
 
     fun createTask() {
-        // In a real app, this would save to the repository
+        viewModelScope.launch {
+            taskRepository.createTask(
+                Task(
+                    title = title.value,
+                    description = description.value,
+                    priority = priority.value,
+                    dueDate = dueDate.value
+                )
+            )
+        }
     }
 
     fun updateTask() {
-        // In a real app, this would update in the repository
-    }
-
-    // Sample data for demonstration
-    private fun getSampleTasks(): List<Task> {
-        return listOf(
-            Task(
-                id = "1",
-                title = "Complete Android Project",
-                description = "Finish the to-do app implementation with Jetpack Compose",
-                priority = Priority.HIGH,
-                dueDate = System.currentTimeMillis() + 86400000 // tomorrow
-            ),
-            Task(
-                id = "2",
-                title = "Buy groceries",
-                description = "Milk, eggs, bread, fruits",
-                priority = Priority.MEDIUM,
-                dueDate = System.currentTimeMillis() + 172800000 // day after tomorrow
-            ),
-            Task(
-                id = "3",
-                title = "Call mom",
-                priority = Priority.LOW
-            ),
-            Task(
-                id = "4",
-                title = "Prepare presentation",
-                description = "Create slides for the team meeting",
-                priority = Priority.HIGH,
-                dueDate = System.currentTimeMillis() + 259200000 // 3 days from now
-            ),
-            Task(
-                id = "5",
-                title = "Go for a run",
-                priority = Priority.MEDIUM,
-                isCompleted = true
+        viewModelScope.launch {
+            taskRepository.updateTask(
+                Task(
+                    id = taskId ?: "",
+                    title = title.value,
+                    description = description.value,
+                    priority = priority.value,
+                    dueDate = dueDate.value
+                )
             )
-        )
+        }
     }
 }

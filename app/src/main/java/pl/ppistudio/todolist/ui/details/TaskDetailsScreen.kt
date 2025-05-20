@@ -9,16 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -30,14 +25,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -53,17 +46,19 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskDetailsScreen(
-    taskId: String,
-    loadTask: (suspend (String) -> Unit),
+//    setTask: (Task) -> Unit,
     onGoBack: () -> Unit,
+    onTaskCheckedChange: (Boolean) -> Unit,
     taskState: State<Task?>,
-    isLoading: Boolean,
-    onEditTask: (String) -> Unit,
+    onTaskEdit: (Task) -> Unit,
+    onTaskDelete: () -> Unit,
 ) {
 
-    LaunchedEffect(taskId) {
-        loadTask(taskId)
-    }
+//    LaunchedEffect(taskState.value) {
+//        taskState.value?.let {
+//            setTask(it)
+//        }
+//    }
 
     Scaffold(
         topBar = {
@@ -82,7 +77,7 @@ fun TaskDetailsScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            onEditTask(taskId)
+                            onTaskEdit(taskState.value!!)
                         }
                     ) {
                         Icon(
@@ -113,7 +108,7 @@ fun TaskDetailsScreen(
                     Checkbox(
                         checked = task.isCompleted,
                         onCheckedChange = { isChecked ->
-//                                viewModel.updateTaskCompletionStatus(isChecked)
+                            onTaskCheckedChange(isChecked)
                         },
                         colors = CheckboxDefaults.colors(
                             checkedColor = MaterialTheme.colorScheme.primary
@@ -199,8 +194,8 @@ fun TaskDetailsScreen(
 
                 Button(
                     onClick = {
-//                            viewModel.deleteTask()
-//                            navController.popBackStack()
+                        onTaskDelete()
+                        onGoBack()
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
@@ -242,11 +237,11 @@ private fun TaskDetailsScreenPreview() {
     )) }
 
     TaskDetailsScreen(
-        taskId = "1",
-        loadTask = {},
         onGoBack = {},
         taskState = task,
-        isLoading = false,
-        onEditTask = {}
+        onTaskEdit = {},
+        onTaskDelete = {},
+        onTaskCheckedChange = {},
+//        setTask = {}
     )
 }

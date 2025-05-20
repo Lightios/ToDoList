@@ -1,5 +1,7 @@
 package pl.ppistudio.todolist.ui.details
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -18,68 +20,64 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pl.ppistudio.todolist.R
+import pl.ppistudio.todolist.ToDoListApp
 import pl.ppistudio.todolist.domain.Priority
+import pl.ppistudio.todolist.ui.theme.ToDoListTheme
+import pl.ppistudio.todolist.ui.theme.priorityToColor
 
 
 @Composable
 fun PriorityChip(priority: Priority) {
-    val (backgroundColor, contentColor, label) = when (priority) {
-        Priority.HIGH -> Triple(
-            MaterialTheme.colorScheme.errorContainer,
-            MaterialTheme.colorScheme.error,
-            "High Priority"
-        )
-        Priority.MEDIUM -> Triple(
-            MaterialTheme.colorScheme.primaryContainer,
-            MaterialTheme.colorScheme.primary,
-            "Medium Priority"
-        )
-        Priority.LOW -> Triple(
-            MaterialTheme.colorScheme.surfaceVariant,
-            MaterialTheme.colorScheme.onSurfaceVariant,
-            "Low Priority"
-        )
+    val label = when (priority) {
+        Priority.HIGH -> "High Priority"
+        Priority.MEDIUM -> "Medium Priority"
+        Priority.LOW -> "Low Priority"
+    }
+
+    val resource = when (priority) {
+        Priority.HIGH -> R.drawable.priority_high
+        Priority.MEDIUM -> R.drawable.priority_medium
+        Priority.LOW -> R.drawable.priority_low
     }
 
     Surface(
-        color = backgroundColor,
+        color = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(16.dp),
-        modifier = Modifier.padding(vertical = 4.dp)
+        modifier = Modifier.padding(vertical = 4.dp),
+        border = BorderStroke(
+            width = 1.dp,
+            color = priorityToColor(priority)
+        ),
+
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            when (priority) {
-                Priority.HIGH -> Icon(
-                    painter = painterResource(id = R.drawable.priority_high),
-                    contentDescription = null,
-                    tint = contentColor,
-                    modifier = Modifier.size(16.dp)
-                )
-                Priority.MEDIUM -> Icon(
-                    painter = painterResource(id = R.drawable.priority_medium),
-                    contentDescription = null,
-                    tint = contentColor,
-                    modifier = Modifier.size(16.dp)
-                )
-                Priority.LOW -> Icon(
-                    painter = painterResource(id = R.drawable.priority_low),
-                    contentDescription = null,
-                    tint = contentColor,
-                    modifier = Modifier.size(16.dp)
-                )
-            }
+            Image(
+                painter = painterResource(id = resource),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
 
             Spacer(modifier = Modifier.width(4.dp))
 
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium,
-                color = contentColor
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PriorityChipPreview() {
+    ToDoListTheme  {
+        PriorityChip(priority = Priority.HIGH)
     }
 }
