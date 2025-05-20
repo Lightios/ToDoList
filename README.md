@@ -34,5 +34,3 @@ The app follows **MVVM (Model-View-ViewModel)** architecture with a clean separa
 - **Coroutines**: For asynchronous programming.
 - **Navigation Component**: For managing app navigation.
 - **Material Design 3**: For a modern and consistent UI.
-
-## Project Structure
